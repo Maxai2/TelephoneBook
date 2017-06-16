@@ -6,9 +6,22 @@ using namespace std;
 
 HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
+#define nameSurnmae 50
+#define mail 60
+#define phoneNumber 20
+//--------------------------------------
 #define defaultColor 7
 #define menuColor 11
 #define nameLength 255
+
+struct Person
+{
+	char name[nameSurnmae];
+	char surnmae[nameSurnmae];
+	int age;
+	char number[phoneNumber];
+	char email[mail];
+};
 
 void frame()
 {
@@ -75,6 +88,26 @@ void delimetr(short row)
 		cout << char(196);
 }
 
+void redaktFrame()
+{
+	int sLength = 67, fLength = 100, sWidth = 17, fWidth = 29;
+
+	for (short i = sWidth; i < fWidth; i++)
+	{
+		for (short j = sLength; j < fLength; j++)
+		{
+			SetConsoleCursorPosition(h, { j,i });
+
+			if (i == sWidth || i == fWidth - 1)
+				cout << char(178);
+			else if (j == sLength && sWidth < i && i < fWidth)
+				cout << char(178);
+			else if (j == fLength - 1 && sWidth < i && i < fWidth)
+				cout << char(178);
+		}
+	}
+}
+
 int len(char **arr, int row)
 {
 	int length = 0;
@@ -93,21 +126,18 @@ void cleanRedaktPlace()
 	}
 }
 
-char **AddStudents(char **arr, int &size)
+void AddPerson(Person *p, int &size)
 {
-	//	int key = 0;
-	cin.ignore();
-	SetConsoleCursorPosition(h, { 0, 24 });
-	cout << "Input name(FirstN LastN FatherN): ";
+	redaktFrame();
+	//cin.ignore();
+	//SetConsoleCursorPosition(h, { 0, 24 });
+	//cout << "Input name(FirstN LastN FatherN): ";
 
-	//if ((key = getch()) == 13)
-	//	return arr;
-
-	SetConsoleTextAttribute(h, 10);
-	cin.getline(arr[size], nameLength);
-	SetConsoleTextAttribute(h, 7);
-	size++;
-	return arr;
+	//SetConsoleTextAttribute(h, 10);
+	//cin.getline(arr[size], nameLength);
+	//SetConsoleTextAttribute(h, 7);
+	//size++;
+	//return arr;
 }
 
 void Print(char **arr, int size)
@@ -255,8 +285,9 @@ void FindStudent(char **arr, int size)
 	system("pause");
 }
 
-void menu(char **list, int size)
+void menu(int size)
 {
+	Person *p = new Person[size];
 	int sel = 0, key = 0;
 	clearMenu();
 	if (size == 0)
@@ -266,7 +297,7 @@ void menu(char **list, int size)
 
 			if (sel == 0)
 				SetConsoleTextAttribute(h, menuColor);
-			cout << "Add student";
+			cout << "Add person";
 
 			SetConsoleTextAttribute(h, defaultColor);
 			SetConsoleCursorPosition(h, { 75, 3 });
@@ -285,97 +316,97 @@ void menu(char **list, int size)
 				sel++;
 			else if (key == 13 && sel == 0)
 			{
-				AddStudents(list, size);
+				AddPerson(p, size);
 				count(size);
-				cleanRedaktPlace();
-				Sort(list, size);
-				menu(list, size);
+//				cleanRedaktPlace();
+				//Sort(list, size);
+				//menu(list, size);
 				break;
 			}
 			else if (key == 13 && sel == 1)
 				break;
 		}
-	else
-		while (true)
-		{
-			SetConsoleCursorPosition(h, { 72, 2 });
+	//else
+	//	while (true)
+	//	{
+	//		SetConsoleCursorPosition(h, { 72, 2 });
 
-			if (sel == 0)
-				SetConsoleTextAttribute(h, menuColor);
-			cout << "Add student";
+	//		if (sel == 0)
+	//			SetConsoleTextAttribute(h, menuColor);
+	//		cout << "Add person";
 
-			SetConsoleTextAttribute(h, defaultColor);
-			SetConsoleCursorPosition(h, { 70, 3 });
+	//		SetConsoleTextAttribute(h, defaultColor);
+	//		SetConsoleCursorPosition(h, { 70, 3 });
 
-			if (sel == 1)
-				SetConsoleTextAttribute(h, menuColor);
-			cout << "Remove student";
+	//		if (sel == 1)
+	//			SetConsoleTextAttribute(h, menuColor);
+	//		cout << "Remove person";
 
-			SetConsoleTextAttribute(h, defaultColor);
-			SetConsoleCursorPosition(h, { 67, 4 });
+	//		SetConsoleTextAttribute(h, defaultColor);
+	//		SetConsoleCursorPosition(h, { 67, 4 });
 
-			if (sel == 2)
-				SetConsoleTextAttribute(h, menuColor);
-			cout << "Student modification";
+	//		if (sel == 2)
+	//			SetConsoleTextAttribute(h, menuColor);
+	//		cout << "Person modification";
 
-			SetConsoleTextAttribute(h, defaultColor);
-			SetConsoleCursorPosition(h, { 70, 5 });
+	//		SetConsoleTextAttribute(h, defaultColor);
+	//		SetConsoleCursorPosition(h, { 70, 5 });
 
-			if (sel == 3)
-				SetConsoleTextAttribute(h, menuColor);
-			cout << "Student search";
+	//		if (sel == 3)
+	//			SetConsoleTextAttribute(h, menuColor);
+	//		cout << "Person search";
 
-			SetConsoleTextAttribute(h, defaultColor);
-			SetConsoleCursorPosition(h, { 75, 6 });
+	//		SetConsoleTextAttribute(h, defaultColor);
+	//		SetConsoleCursorPosition(h, { 75, 6 });
 
-			if (sel == 4)
-				SetConsoleTextAttribute(h, menuColor);
-			cout << "Exit";
+	//		if (sel == 4)
+	//			SetConsoleTextAttribute(h, menuColor);
+	//		cout << "Exit";
 
-			SetConsoleTextAttribute(h, defaultColor);
+	//		SetConsoleTextAttribute(h, defaultColor);
 
-			key = getch();
-			if (key == 224)
-				key = getch();
+	//		key = getch();
+	//		if (key == 224)
+	//			key = getch();
 
-			if (key == 72 && 0 < sel) // Up
-				sel--;
-			else if (key == 80 && sel < 4) // Down
-				sel++;
-			else if (key == 13 && sel == 0)
-			{
-				AddStudents(list, size);
-				count(size);
-				cleanRedaktPlace();
-				Sort(list, size);
-				menu(list, size);
-				break;
-			}
-			else if (key == 13 && sel == 1)
-			{
-				RemoveStudent(list, size);
-				count(size);
-				cleanRedaktPlace();
-				Print(list, size);
-				menu(list, size);
-				break;
-			}
-			else if (key == 13 && sel == 2)
-			{
-				EditStudent(list, size);
-				cleanRedaktPlace();
-				Print(list, size);
-				menu(list, size);
-				break;
-			}
-			else if (key == 13 && sel == 3)
-			{
-				FindStudent(list, size);
-				cleanRedaktPlace();
-				menu(list, size);
-				break;
-			}
-			else if (key == 13 && sel == 4)
-				break;
-		}
+	//		if (key == 72 && 0 < sel) // Up
+	//			sel--;
+	//		else if (key == 80 && sel < 4) // Down
+	//			sel++;
+	//		else if (key == 13 && sel == 0)
+	//		{
+	//			AddStudents(list, size);
+	//			count(size);
+	//			cleanRedaktPlace();
+	//			Sort(list, size);
+	//			menu(list, size);
+	//			break;
+	//		}
+	//		else if (key == 13 && sel == 1)
+	//		{
+	//			RemoveStudent(list, size);
+	//			count(size);
+	//			cleanRedaktPlace();
+	//			Print(list, size);
+	//			menu(list, size);
+	//			break;
+	//		}
+	//		else if (key == 13 && sel == 2)
+	//		{
+	//			EditStudent(list, size);
+	//			cleanRedaktPlace();
+	//			Print(list, size);
+	//			menu(list, size);
+	//			break;
+	//		}
+	//		else if (key == 13 && sel == 3)
+	//		{
+	//			FindStudent(list, size);
+	//			cleanRedaktPlace();
+	//			menu(list, size);
+	//			break;
+	//		}
+	//		else if (key == 13 && sel == 4)
+	//			break;
+	//	}
 }
