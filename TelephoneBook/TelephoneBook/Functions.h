@@ -1,4 +1,4 @@
 #pragma once
 
 void frame();
-void menu(int size);
+void menu(Person *p, int size);

@@ -6,22 +6,9 @@ using namespace std;
 
 HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
-#define nameSurnmae 50
-#define mail 60
-#define phoneNumber 20
-//--------------------------------------
 #define defaultColor 7
 #define menuColor 11
 #define nameLength 255
-
-struct Person
-{
-	char name[nameSurnmae];
-	char surname[nameSurnmae];
-	int age;
-	char number[phoneNumber];
-	char email[mail];
-};
 
 void frame()
 {
@@ -143,26 +130,44 @@ void fillRedaktPlace()
 	}
 }
  
-void AddPerson(Person *p, int &size)
+void AddPerson(Person p, int &size)
 {
 	redaktFrame();
 	fillRedaktPlace();
 	
 	short row = 15, col = 75;
 	char str[50] = {};
+
+	Person p[10];
+
+	SetConsoleTextAttribute(h, 10);
 	SetConsoleCursorPosition(h, { col, row });
 	cin.getline(str, 50);
+	strcpy(p[0]->name, str);
+	row += 2;
 
-	strcpy(p->name, str);
-	//cin.ignore();
-	//SetConsoleCursorPosition(h, { 0, 24 });
-	//cout << "Input name(FirstN LastN FatherN): ";
+	SetConsoleCursorPosition(h, { col, row });
+	cin.getline(str, 50);
+	strcpy(p[0].surname, str);
+	row += 2;
 
-	//SetConsoleTextAttribute(h, 10);
-	//cin.getline(arr[size], nameLength);
-	//SetConsoleTextAttribute(h, 7);
-	//size++;
-	//return arr;
+	SetConsoleCursorPosition(h, { col, row });
+	cin >> p[0].age;
+	row += 2;
+
+	SetConsoleCursorPosition(h, { col, row });
+	cin.getline(str, 50);
+	strcpy(p[0].number, str);
+	row += 2;
+
+	SetConsoleCursorPosition(h, { col, row });
+	cin.getline(str, 50);
+	strcpy(p[0].email, str);
+	row += 2;
+
+	SetConsoleTextAttribute(h, 7);
+
+	size++;
 }
 
 void Print(char **arr, int size)
@@ -308,9 +313,8 @@ void FindStudent(char **arr, int size)
 	system("pause");
 }
 
-void menu(int size)
+void menu(Person *p, int size)
 {
-	Person *p = new Person[size];
 	int sel = 0, key = 0;
 	clearMenu();
 	if (size == 0)
@@ -341,7 +345,7 @@ void menu(int size)
 			{
 				AddPerson(p, size);
 				count(size);
-				//				cleanRedaktPlace();
+				//cleanRedaktPlace();
 				//Sort(list, size);
 				//menu(list, size);
 				break;
