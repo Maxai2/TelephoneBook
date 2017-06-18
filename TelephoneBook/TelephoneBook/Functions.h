@@ -1,4 +1,4 @@
 #pragma once
 
 void frame();
-void menu(Person *p, int size);
+void menu(struct Person* pers, int size);

@@ -130,7 +130,7 @@ void fillRedaktPlace()
 	}
 }
  
-void AddPerson(Person p, int &size)
+void AddPerson(struct Person *p, int &size)
 {
 	redaktFrame();
 	fillRedaktPlace();
@@ -138,12 +138,10 @@ void AddPerson(Person p, int &size)
 	short row = 15, col = 75;
 	char str[50] = {};
 
-	Person p[10];
-
 	SetConsoleTextAttribute(h, 10);
 	SetConsoleCursorPosition(h, { col, row });
 	cin.getline(str, 50);
-	strcpy(p[0]->name, str);
+	strcpy(p[size]->name, str);
 	row += 2;
 
 	SetConsoleCursorPosition(h, { col, row });
@@ -313,7 +311,7 @@ void FindStudent(char **arr, int size)
 	system("pause");
 }
 
-void menu(Person *p, int size)
+void menu(struct Person* pers, int size)
 {
 	int sel = 0, key = 0;
 	clearMenu();

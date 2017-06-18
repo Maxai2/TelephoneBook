@@ -23,8 +23,7 @@ struct Person
 int main()
 {
 	int size = 0;
-	Person *p;
-	p = new Person[size];
+	struct Person arr[size] = {};
 
 	SetConsoleCursorPosition(w, { 15, 0 });
 	cout << "STUDENT LIST | COUNT: ";
