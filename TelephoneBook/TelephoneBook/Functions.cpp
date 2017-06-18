@@ -142,7 +142,7 @@ void fillRedaktPlace()
 			delimetr(column, row++, 20, 14);
 	}
 }
-
+ 
 void AddPerson(Person *p, int &size)
 {
 	redaktFrame();
