@@ -6,9 +6,24 @@ using namespace std;
 
 HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
+#define nameSurname 50
+#define mail 60
+#define phoneNumber 20
+#define ageNumber 3
+//--------------------------------------
 #define defaultColor 7
 #define menuColor 11
 #define nameLength 255
+
+struct Person
+{
+	char name[nameSurname];
+	char surname[nameSurname];
+	//char age[ageNumber];
+	int age;
+	char number[phoneNumber];
+	char email[mail];
+};
 
 void frame()
 {
@@ -97,20 +112,35 @@ void redaktFrame()
 	}
 }
 
-int len(char **arr, int row)
+void cleanRedaktFrame()
 {
-	int length = 0;
-	while (arr[row][length] != '\0')
-		length++;
-	return length;
+	int sLength = 65, fLength = 100, sWidth = 14, fWidth = 25;
+
+	for (short i = sWidth; i < fWidth; i++)
+	{
+		for (short j = sLength; j < fLength; j++)
+		{
+			SetConsoleCursorPosition(h, { j,i });
+
+			cout << " ";
+		}
+	}
 }
+
+//int len(char **arr, int row)
+//{
+//	int length = 0;
+//	while (arr[row][length] != '\0')
+//		length++;
+//	return length;
+//}
 
 void cleanRedaktPlace()
 {
-	for (short i = 24; i < 30; i++)
+	for (short i = 24; i < 31; i++)
 	{
 		SetConsoleCursorPosition(h, { 0, i });
-		for (int k = 0; k < 100; k++)
+		for (int k = 0; k < 50; k++)
 			cout << " ";
 	}
 }
@@ -126,49 +156,60 @@ void fillRedaktPlace()
 		SetConsoleCursorPosition(h, { column, row++ });
 		cout << names[i];
 		if (i != 4)
-			delimetr(column, row++, 20, 14);
+			delimetr(column, row++, 30, 14);
 	}
 }
- 
-void AddPerson(struct Person *p, int &size)
+
+void AddPerson(Person *p, int &size)
 {
 	redaktFrame();
 	fillRedaktPlace();
-	
-	short row = 15, col = 75;
+
+	short row = 15, col = 75, age = 0;
 	char str[50] = {};
+
+	if (str == "13")
+		cin.ignore();
 
 	SetConsoleTextAttribute(h, 10);
 	SetConsoleCursorPosition(h, { col, row });
 	cin.getline(str, 50);
-	strcpy(p[size]->name, str);
+	strcpy(p[size].name, str);
 	row += 2;
 
 	SetConsoleCursorPosition(h, { col, row });
 	cin.getline(str, 50);
-	strcpy(p[0].surname, str);
+	strcpy(p[size].surname, str);
 	row += 2;
 
 	SetConsoleCursorPosition(h, { col, row });
-	cin >> p[0].age;
+	cin >> age;
+	p[size].age = age;
+	//cin.getline(str, 50);
+	//strcpy(p[size].age, str);
+	row += 2;
+	cin.ignore();
+
+	SetConsoleCursorPosition(h, { col, row });
+	cin.getline(str, 50);
+	strcpy(p[size].number, str);
 	row += 2;
 
 	SetConsoleCursorPosition(h, { col, row });
 	cin.getline(str, 50);
-	strcpy(p[0].number, str);
-	row += 2;
-
-	SetConsoleCursorPosition(h, { col, row });
-	cin.getline(str, 50);
-	strcpy(p[0].email, str);
-	row += 2;
+	strcpy(p[size].email, str);
 
 	SetConsoleTextAttribute(h, 7);
 
 	size++;
 }
 
-void Print(char **arr, int size)
+void printSurnameName(Person *arr, int index)
+{
+	cout << arr[index].surname << " " << arr[index].name;
+}
+
+void Print(Person *arr, int size)
 {
 	short temp = 1;
 	clearTable();
@@ -178,31 +219,32 @@ void Print(char **arr, int size)
 			SetConsoleCursorPosition(h, { 1, temp * 2 });
 			cout << "\t\t\t\t\t\t";
 			SetConsoleCursorPosition(h, { 1, temp * 2 });
-			cout << i + 1 << ". " << arr[i];
+			cout << i + 1 << ". ";
+			printSurnameName(arr, i);
 			delimetr(1, temp * 2 + 1, 40, menuColor);
 			temp++;
 		}
 }
 
-void Sort(char **arr, int size)
+void Sort(Person *arr, int size)
 {
-	char *temp;
+	Person temp;
 	if (size == 1)
 		Print(arr, size);
 	else
 	{
 		for (int i = size - 1; i > 0; i--)
 		{
-			for (int j = 0; arr[i][j] != '\0'; j++)
+			for (int j = 0; arr[i].surname != '\0'; j++)
 			{
-				if (arr[i][j] < arr[i - 1][j])
+				if (arr[i].surname < arr[i + 1].surname)
 				{
 					temp = arr[i - 1];
 					arr[i - 1] = arr[i];
 					arr[i] = temp;
 					break;
 				}
-				else if (arr[i][j] > arr[i - 1][j])
+				else if (arr[i].surname > arr[i + 1].surname)
 					break;
 			}
 		}
@@ -211,10 +253,10 @@ void Sort(char **arr, int size)
 	}
 }
 
-char **RemoveStudent(char **arr, int &size)
+void RemoveStudent(Person *p, int &size)
 {
 	int num = 0;
-	char *temp;
+	Person temp;
 	SetConsoleCursorPosition(h, { 0, 24 });
 	cout << "Enter the order number of student for remove: ";
 	SetConsoleTextAttribute(h, 10);
@@ -227,54 +269,132 @@ char **RemoveStudent(char **arr, int &size)
 		if (num == size - 1 || size == 1)
 			break;
 
-		temp = arr[num];
-		arr[num] = arr[num + 1];
-		arr[num + 1] = temp;
+		temp = p[num];
+		p[num] = p[num + 1];
+		p[num + 1] = temp;
 		num++;
 	}
+//	delete[] p;
 	size--;
-	delete[] arr[size];
-	return arr;
 }
 
-char **EditStudent(char **arr, int size)
+void fillPersonData(Person *p, int index)
 {
-	int num = 0, key;
+	short row = 15, col = 75;
+
+	SetConsoleTextAttribute(h, 10);
+	SetConsoleCursorPosition(h, { col, row });
+	cout << p[index].name;
+	row += 2;
+
+	SetConsoleCursorPosition(h, { col, row });
+	cout << p[index].surname;
+	row += 2;
+
+	SetConsoleCursorPosition(h, { col, row });
+	cout << p[index].age;
+	row += 2;
+
+	SetConsoleCursorPosition(h, { col, row });
+	cout << p[index].number;
+	row += 2;
+
+	SetConsoleCursorPosition(h, { col, row });
+	cout << p[index].email;
+
+	SetConsoleTextAttribute(h, 7);
+}
+
+void EditStudent(Person *arr, int size)
+{
+	cleanRedaktFrame();
+	int num = 0, age = 0;
 	SetConsoleCursorPosition(h, { 0, 24 });
 	cout << "Enter the order number of student for editing: ";
 	SetConsoleTextAttribute(h, 10);
 	cin >> num;
 	num--;
+	int index = num;
 	SetConsoleTextAttribute(h, 7);
 	cleanRedaktPlace();
+	redaktFrame();
+	fillRedaktPlace();
+	fillPersonData(arr, index);
 	SetConsoleCursorPosition(h, { 0, 24 });
-	cout << "Old name: ";
+	cout << "Choice number";
+	cout << "\n1: Name";
+	cout << "\n2: Surname";
+	cout << "\n3: Age";
+	cout << "\n4: Number";
+	cout << "\n5: Email";
+	cout << "\nChoice: ";
+	int choice;
 	SetConsoleTextAttribute(h, 10);
-	cout << arr[num] << endl;
+	cin >> choice;
 	SetConsoleTextAttribute(h, 7);
-	cout << "Input new name with modification press (e) or (esc) for return menu";
-	cin.ignore();
-
-	while (true)
+	cleanRedaktPlace();
+	
+	switch (choice)
 	{
-		key = getch();
+	case 1:
+		cin.ignore();
+		SetConsoleCursorPosition(h, { 0, 24 });
+		cout << "Input new name : ";
+		SetConsoleTextAttribute(h, 10);
+		cin.getline(arr[num].name, nameSurname);
+		SetConsoleTextAttribute(h, 7);
+	break;
 
-		if (key == 27) // esc
-			return arr;
-		else if (key == 101) // e
-		{
-			cleanRedaktPlace();
-			SetConsoleCursorPosition(h, { 0, 24 });
-			cout << "Old name: ";
-			SetConsoleTextAttribute(h, 10);
-			cout << arr[num] << endl;
-			SetConsoleTextAttribute(h, 7);
-			cout << "Input new name : ";
-			SetConsoleTextAttribute(h, 10);
-			cin.getline(arr[num], nameLength);
-			SetConsoleTextAttribute(h, 7);
-			return arr;
-		}
+	case 2:
+		cin.ignore();
+		SetConsoleCursorPosition(h, { 0, 24 });
+		cout << "Input new surname : ";
+		SetConsoleTextAttribute(h, 10);
+		cin.getline(arr[num].surname, nameSurname);
+		SetConsoleTextAttribute(h, 7);
+	break;
+
+	case 3:
+		cin.ignore();
+		SetConsoleCursorPosition(h, { 0, 24 });
+		cout << "Input new age : ";
+		SetConsoleTextAttribute(h, 10);
+		cin >> age;
+		arr[num].age = age;
+		SetConsoleTextAttribute(h, 7);
+	break;
+
+	case 4:
+		cin.ignore();
+		SetConsoleCursorPosition(h, { 0, 24 });
+		cout << "Input new number : ";
+		SetConsoleTextAttribute(h, 10);
+		cin.getline(arr[num].number, phoneNumber);
+		SetConsoleTextAttribute(h, 7);
+	break;
+
+	case 5:
+		cin.ignore();
+		SetConsoleCursorPosition(h, { 0, 24 });
+		cout << "Input new email : ";
+		SetConsoleTextAttribute(h, 10);
+		cin.getline(arr[num].email, mail);
+		SetConsoleTextAttribute(h, 7);
+	}
+	cleanRedaktPlace();
+	redaktFrame();
+	fillRedaktPlace();
+	fillPersonData(arr, index);
+	SetConsoleCursorPosition(h, { 0, 24 });
+	cout << "Redact again?(y/n): ";
+	char sym;
+	cin >> sym;
+	if (sym == 'y')
+		EditStudent(arr, size);
+	else
+	{
+		cleanRedaktFrame();
+		cleanRedaktPlace();
 	}
 }
 
@@ -311,8 +431,9 @@ void FindStudent(char **arr, int size)
 	system("pause");
 }
 
-void menu(struct Person* pers, int size)
+void menu(int size)
 {
+	static Person *arr = new Person[size];
 	int sel = 0, key = 0;
 	clearMenu();
 	if (size == 0)
@@ -341,97 +462,96 @@ void menu(struct Person* pers, int size)
 				sel++;
 			else if (key == 13 && sel == 0)
 			{
-				AddPerson(p, size);
+				AddPerson(arr, size);
 				count(size);
-				//cleanRedaktPlace();
-				//Sort(list, size);
-				//menu(list, size);
+				cleanRedaktFrame();
+				Sort(arr, size);
+				menu(size);
 				break;
 			}
 			else if (key == 13 && sel == 1)
 				break;
 		}
-	//else
-	//	while (true)
-	//	{
-	//		SetConsoleCursorPosition(h, { 72, 2 });
+	else
+		while (true)
+		{
+			SetConsoleCursorPosition(h, { 72, 2 });
 
-	//		if (sel == 0)
-	//			SetConsoleTextAttribute(h, menuColor);
-	//		cout << "Add person";
+			if (sel == 0)
+				SetConsoleTextAttribute(h, menuColor);
+			cout << "Add person";
 
-	//		SetConsoleTextAttribute(h, defaultColor);
-	//		SetConsoleCursorPosition(h, { 70, 3 });
+			SetConsoleTextAttribute(h, defaultColor);
+			SetConsoleCursorPosition(h, { 70, 3 });
 
-	//		if (sel == 1)
-	//			SetConsoleTextAttribute(h, menuColor);
-	//		cout << "Remove person";
+			if (sel == 1)
+				SetConsoleTextAttribute(h, menuColor);
+			cout << "Remove person";
 
-	//		SetConsoleTextAttribute(h, defaultColor);
-	//		SetConsoleCursorPosition(h, { 67, 4 });
+			SetConsoleTextAttribute(h, defaultColor);
+			SetConsoleCursorPosition(h, { 67, 4 });
 
-	//		if (sel == 2)
-	//			SetConsoleTextAttribute(h, menuColor);
-	//		cout << "Person modification";
+			if (sel == 2)
+				SetConsoleTextAttribute(h, menuColor);
+			cout << "Person modification";
 
-	//		SetConsoleTextAttribute(h, defaultColor);
-	//		SetConsoleCursorPosition(h, { 70, 5 });
+			SetConsoleTextAttribute(h, defaultColor);
+			SetConsoleCursorPosition(h, { 70, 5 });
 
-	//		if (sel == 3)
-	//			SetConsoleTextAttribute(h, menuColor);
-	//		cout << "Person search";
+			if (sel == 3)
+				SetConsoleTextAttribute(h, menuColor);
+			cout << "Person search";
 
-	//		SetConsoleTextAttribute(h, defaultColor);
-	//		SetConsoleCursorPosition(h, { 75, 6 });
+			SetConsoleTextAttribute(h, defaultColor);
+			SetConsoleCursorPosition(h, { 75, 6 });
 
-	//		if (sel == 4)
-	//			SetConsoleTextAttribute(h, menuColor);
-	//		cout << "Exit";
+			if (sel == 4)
+				SetConsoleTextAttribute(h, menuColor);
+			cout << "Exit";
 
-	//		SetConsoleTextAttribute(h, defaultColor);
+			SetConsoleTextAttribute(h, defaultColor);
 
-	//		key = getch();
-	//		if (key == 224)
-	//			key = getch();
+			key = getch();
+			if (key == 224)
+				key = getch();
 
-	//		if (key == 72 && 0 < sel) // Up
-	//			sel--;
-	//		else if (key == 80 && sel < 4) // Down
-	//			sel++;
-	//		else if (key == 13 && sel == 0)
-	//		{
-	//			AddStudents(list, size);
-	//			count(size);
-	//			cleanRedaktPlace();
-	//			Sort(list, size);
-	//			menu(list, size);
-	//			break;
-	//		}
-	//		else if (key == 13 && sel == 1)
-	//		{
-	//			RemoveStudent(list, size);
-	//			count(size);
-	//			cleanRedaktPlace();
-	//			Print(list, size);
-	//			menu(list, size);
-	//			break;
-	//		}
-	//		else if (key == 13 && sel == 2)
-	//		{
-	//			EditStudent(list, size);
-	//			cleanRedaktPlace();
-	//			Print(list, size);
-	//			menu(list, size);
-	//			break;
-	//		}
-	//		else if (key == 13 && sel == 3)
-	//		{
-	//			FindStudent(list, size);
-	//			cleanRedaktPlace();
-	//			menu(list, size);
-	//			break;
-	//		}
-	//		else if (key == 13 && sel == 4)
-	//			break;
-	//	}
+			if (key == 72 && 0 < sel) // Up
+				sel--;
+			else if (key == 80 && sel < 4) // Down
+				sel++;
+			else if (key == 13 && sel == 0)
+			{
+				AddPerson(arr, size);
+				count(size);
+				cleanRedaktFrame();
+				Sort(arr, size);
+				menu(size);
+				break;
+			}
+			else if (key == 13 && sel == 1)
+			{
+				RemoveStudent(arr, size);
+				count(size);
+				cleanRedaktPlace();
+				Print(arr, size);
+				menu(size);
+				break;
+			}
+			else if (key == 13 && sel == 2)
+			{
+				EditStudent(arr, size);
+				Print(arr, size);
+				menu(size);
+				break;
+			}
+			//else if (key == 13 && sel == 3)
+			//{
+			//	FindStudent(arr, size);
+			//	cleanRedaktPlace();
+			//	menu(list, size);
+			//	break;
+			//}
+			else if (key == 13 && sel == 4)
+				break;
+		}
 }
