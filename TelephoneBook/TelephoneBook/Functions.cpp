@@ -9,7 +9,7 @@ HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 #define nameSurname 50
 #define mail 60
 #define phoneNumber 20
-#define ageNumber 3
+//#define ageNumber 3
 //--------------------------------------
 #define defaultColor 7
 #define menuColor 11
@@ -165,7 +165,7 @@ void AddPerson(Person *p, int &size)
 	redaktFrame();
 	fillRedaktPlace();
 
-	short row = 15, col = 75, age = 0;
+	short row = 15, col = 75, myage = 0;
 	char str[50] = {};
 
 	if (str == "13")
@@ -183,8 +183,8 @@ void AddPerson(Person *p, int &size)
 	row += 2;
 
 	SetConsoleCursorPosition(h, { col, row });
-	cin >> age;
-	p[size].age = age;
+	cin >> myage;
+	p[size].age = myage;
 	//cin.getline(str, 50);
 	//strcpy(p[size].age, str);
 	row += 2;
@@ -229,6 +229,7 @@ void Print(Person *arr, int size)
 void Sort(Person *arr, int size)
 {
 	Person temp;
+	bool check = true;
 	if (size == 1)
 		Print(arr, size);
 	else
@@ -242,18 +243,36 @@ void Sort(Person *arr, int size)
 					temp = arr[i - 1];
 					arr[i - 1] = arr[i];
 					arr[i] = temp;
+					check = false;
 					break;
 				}
 				else if (arr[i].surname > arr[i + 1].surname)
+				{
+					check = false;
 					break;
+				}
 			}
+
+			if (check)
+				for (int j = 0; arr[i].name != '\0'; j++)
+				{
+					if (arr[i].name < arr[i + 1].name)
+					{
+						temp = arr[i - 1];
+						arr[i - 1] = arr[i];
+						arr[i] = temp;
+						break;
+					}
+					else if (arr[i].name > arr[i + 1].name)
+						break;
+				}
 		}
 
 		Print(arr, size);
 	}
 }
 
-void RemoveStudent(Person *p, int &size)
+void RemovePerson(Person *p, int &size)
 {
 	int num = 0;
 	Person temp;
@@ -305,7 +324,7 @@ void fillPersonData(Person *p, int index)
 	SetConsoleTextAttribute(h, 7);
 }
 
-void EditStudent(Person *arr, int size)
+void EditPerson(Person *arr, int size)
 {
 	cleanRedaktFrame();
 	int num = 0, age = 0;
@@ -321,24 +340,24 @@ void EditStudent(Person *arr, int size)
 	fillRedaktPlace();
 	fillPersonData(arr, index);
 	SetConsoleCursorPosition(h, { 0, 24 });
-	cout << "Choice number";
-	cout << "\n1: Name";
-	cout << "\n2: Surname";
-	cout << "\n3: Age";
-	cout << "\n4: Number";
-	cout << "\n5: Email";
+	cout << "Choice number of order for editing";
+	cout << "\n1. Name";
+	cout << "\n2. Surname";
+	cout << "\n3. Age";
+	cout << "\n4. Number";
+	cout << "\n5. Email";
 	cout << "\nChoice: ";
 	int choice;
 	SetConsoleTextAttribute(h, 10);
 	cin >> choice;
 	SetConsoleTextAttribute(h, 7);
 	cleanRedaktPlace();
+	cin.ignore();
+	SetConsoleCursorPosition(h, { 0, 24 });
 	
 	switch (choice)
 	{
 	case 1:
-		cin.ignore();
-		SetConsoleCursorPosition(h, { 0, 24 });
 		cout << "Input new name : ";
 		SetConsoleTextAttribute(h, 10);
 		cin.getline(arr[num].name, nameSurname);
@@ -346,8 +365,6 @@ void EditStudent(Person *arr, int size)
 	break;
 
 	case 2:
-		cin.ignore();
-		SetConsoleCursorPosition(h, { 0, 24 });
 		cout << "Input new surname : ";
 		SetConsoleTextAttribute(h, 10);
 		cin.getline(arr[num].surname, nameSurname);
@@ -355,8 +372,6 @@ void EditStudent(Person *arr, int size)
 	break;
 
 	case 3:
-		cin.ignore();
-		SetConsoleCursorPosition(h, { 0, 24 });
 		cout << "Input new age : ";
 		SetConsoleTextAttribute(h, 10);
 		cin >> age;
@@ -365,8 +380,6 @@ void EditStudent(Person *arr, int size)
 	break;
 
 	case 4:
-		cin.ignore();
-		SetConsoleCursorPosition(h, { 0, 24 });
 		cout << "Input new number : ";
 		SetConsoleTextAttribute(h, 10);
 		cin.getline(arr[num].number, phoneNumber);
@@ -374,8 +387,6 @@ void EditStudent(Person *arr, int size)
 	break;
 
 	case 5:
-		cin.ignore();
-		SetConsoleCursorPosition(h, { 0, 24 });
 		cout << "Input new email : ";
 		SetConsoleTextAttribute(h, 10);
 		cin.getline(arr[num].email, mail);
@@ -390,7 +401,7 @@ void EditStudent(Person *arr, int size)
 	char sym;
 	cin >> sym;
 	if (sym == 'y')
-		EditStudent(arr, size);
+		EditPerson(arr, size);
 	else
 	{
 		cleanRedaktFrame();
@@ -398,37 +409,221 @@ void EditStudent(Person *arr, int size)
 	}
 }
 
-void FindStudent(char **arr, int size)
+int starChecker(char *arr)
 {
-	char *temp = new char[nameLength];
-	bool check = true;
-	short row = 25;
-	SetConsoleCursorPosition(h, { 0, 24 });
-	cout << "Enter the name or part of name: ";
-	cin.getline(temp, nameLength);
-	for (int i = 0; i < size; i++)
+	int index = 0, count = 0;
+	if (arr[index] != '*')
+		return 1;
+	while (arr[index] != '\0')
 	{
-		for (int j = 0; arr[i][j] != '\0'; j++)
+		if (arr[index] == '*')
+			count++;
+		index++;
+	}
+
+	if (count == 1)
+		return 2;
+	else if (count == 2)
+		return 3;
+	else
+		return 4;
+}
+
+void Data(Person *arr, int num)
+{
+	int index = 0;
+	bool check = true;
+	char temp[20] = {};
+
+	if (num == 1)
+	{
+		while (temp[index] != '*')
 		{
-			if (arr[i][j] == temp[0])
+			for (int j = 0; arr[i].name[j] != '\0'; j++)
 			{
-				for (int k = 0; temp[k] != '\0'; k++, j++)
+				if (arr[i].name[j] == temp[index])
 				{
-					if (arr[i][j] != temp[k])
-						check = false;
-				}
-				if (check)
-				{
-					SetConsoleCursorPosition(h, { 0, row });
-					cout << arr[i];
-					row++;
-					break;
+					for (int index = 0; temp[index] != '*'; index++, j++)
+					{
+						if (arr[i].name[j] != temp[index])
+							check = false;
+					}
+
+					if (check)
+					{
+						redaktFrame();
+						fillRedaktPlace();
+						fillPersonData(arr, i);
+					}
 				}
 			}
 		}
 	}
-	cout << endl;
+	else if (num == 2)
+	{
+		while (temp[index] != '\0')
+		{
+			for (int j = 0; arr[i].name[j] != '\0'; j++)
+			{
+				if (arr[i].name[j] == temp[index])
+				{
+					for (int index = 1; temp[index] != '\0'; index++, j++)
+					{
+						if (arr[i].name[j] != temp[index])
+							check = false;
+					}
+
+					if (check)
+					{
+						redaktFrame();
+						fillRedaktPlace();
+						fillPersonData(arr, i);
+					}
+				}
+			}
+		}
+	}
+	else if (num == 3)
+	{
+		while (temp[++index] != '*' && temp[index] != '\0')
+		{
+			for (int j = 0; arr[i].name[j] != '\0'; j++)
+			{
+				if (arr[i].name[j] == temp[index])
+				{
+					for (int index = 1; temp[index] != '\0' && temp[index] != '*'; index++, j++)
+					{
+						if (arr[i].name[j] != temp[index])
+							check = false;
+					}
+
+					if (check)
+					{
+						redaktFrame();
+						fillRedaktPlace();
+						fillPersonData(arr, i);
+					}
+				}
+			}
+		}
+	}
+	if (temp[index] == '*')
+		while (temp[++index] != '*' && temp[index] != '\0')
+		{
+			for (int j = 0; arr[i].name[j] != '\0'; j++)
+			{
+				if (arr[i].name[j] == temp[index])
+				{
+					for (int index = 1; temp[index] != '\0' && temp[index] != '*'; index++, j++)
+					{
+						if (arr[i].name[j] != temp[index])
+							check = false;
+					}
+
+					if (check)
+					{
+						redaktFrame();
+						fillRedaktPlace();
+						fillPersonData(arr, i);
+					}
+				}
+			}
+		}
+	else
+		while (temp[index] != '*' && temp[index] != '\0')
+		{
+			for (int j = 0; arr[i].name[j] != '\0'; j++)
+			{
+				if (arr[i].name[j] == temp[index])
+				{
+					for (int index = 0; temp[index] != '\0' && temp[index] != '*'; index++, j++)
+					{
+						if (arr[i].name[j] != temp[index])
+							check = false;
+					}
+
+					if (check)
+					{
+						redaktFrame();
+						fillRedaktPlace();
+						fillPersonData(arr, i);
+					}
+				}
+			}
+		}
+}
+
+void FindPerson(Person *arr, int size)
+{
+	char temp[20] = {};
+	int index = 0, checkNum = 0;
+	SetConsoleCursorPosition(h, { 0, 24 });
+	cout << "Choice number of order for search";
+	cout << "\n1. Name";
+	cout << "\n2. Surname";
+	cout << "\n3. Age";
+	cout << "\n4. Number";
+	cout << "\n5. Email";
+	cout << "\nChoice: ";
+	int choice = 0;
+	SetConsoleTextAttribute(h, 10);
+	cin >> choice;
+	SetConsoleTextAttribute(h, 7);
+	cin.ignore();
+	cleanRedaktPlace();
+	SetConsoleCursorPosition(h, { 0, 24 });
+
+	switch (choice)
+	{
+	case 1:
+		cout << "Input name or part of name(use \'*\' for redakt search): ";
+		SetConsoleTextAttribute(h, 10);
+		cin >> temp;
+		SetConsoleTextAttribute(h, 7);
+		checkNum = starChecker(temp);
+		Data(arr, checkNum);
+
+		for (int i = 0; i < size; i++)
+		{
+
+		}
+	break;
+
+	//case 2:
+	//	cout << "Input new surname : ";
+	//	SetConsoleTextAttribute(h, 10);
+	//	cin.getline(arr[num].surname, nameSurname);
+	//	SetConsoleTextAttribute(h, 7);
+	//break;
+
+	//case 3:
+	//	cout << "Input new age : ";
+	//	SetConsoleTextAttribute(h, 10);
+	//	cin >> age;
+	//	arr[num].age = age;
+	//	SetConsoleTextAttribute(h, 7);
+	//break;
+
+	//case 4:
+	//	cout << "Input new number : ";
+	//	SetConsoleTextAttribute(h, 10);
+	//	cin.getline(arr[num].number, phoneNumber);
+	//	SetConsoleTextAttribute(h, 7);
+	//break;
+
+	//case 5:
+	//	cout << "Input new email : ";
+	//	SetConsoleTextAttribute(h, 10);
+	//	cin.getline(arr[num].email, mail);
+	//	SetConsoleTextAttribute(h, 7);
+	}
+	cleanRedaktPlace();
 	system("pause");
+}
+
+void ShowPerson()
+{
+	
 }
 
 void menu(int size)
@@ -507,6 +702,13 @@ void menu(int size)
 
 			if (sel == 4)
 				SetConsoleTextAttribute(h, menuColor);
+			cout << "Show";
+
+			SetConsoleTextAttribute(h, defaultColor);
+			SetConsoleCursorPosition(h, { 75, 7 });
+
+			if (sel == 5)
+				SetConsoleTextAttribute(h, menuColor);
 			cout << "Exit";
 
 			SetConsoleTextAttribute(h, defaultColor);
@@ -517,7 +719,7 @@ void menu(int size)
 
 			if (key == 72 && 0 < sel) // Up
 				sel--;
-			else if (key == 80 && sel < 4) // Down
+			else if (key == 80 && sel < 5) // Down
 				sel++;
 			else if (key == 13 && sel == 0)
 			{
@@ -530,7 +732,7 @@ void menu(int size)
 			}
 			else if (key == 13 && sel == 1)
 			{
-				RemoveStudent(arr, size);
+				RemovePerson(arr, size);
 				count(size);
 				cleanRedaktPlace();
 				Print(arr, size);
@@ -539,19 +741,23 @@ void menu(int size)
 			}
 			else if (key == 13 && sel == 2)
 			{
-				EditStudent(arr, size);
+				EditPerson(arr, size);
 				Print(arr, size);
 				menu(size);
 				break;
 			}
-			//else if (key == 13 && sel == 3)
-			//{
-			//	FindStudent(arr, size);
-			//	cleanRedaktPlace();
-			//	menu(list, size);
-			//	break;
-			//}
+			else if (key == 13 && sel == 3)
+			{
+				FindPerson(arr, size);
+				cleanRedaktPlace();
+				menu(size);
+				break;
+			}
 			else if (key == 13 && sel == 4)
+			{
+				ShowPerson();
+			}
+			else if (key == 13 && sel == 5)
 				break;
 		}
 }
