@@ -11,7 +11,7 @@ int main()
 	int size = 0;
 
 	SetConsoleCursorPosition(w, { 15, 0 });
-	cout << "STUDENT LIST | COUNT: ";
+	cout << "PHONE BOOK | COUNT: ";
 	SetConsoleTextAttribute(w, 10);
 	cout << size;
 	SetConsoleTextAttribute(w, 7);
