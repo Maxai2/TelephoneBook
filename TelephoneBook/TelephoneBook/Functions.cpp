@@ -17,12 +17,12 @@ HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
 struct Person
 {
-	char name[nameSurname];
-	char surname[nameSurname];
+	char name[nameSurname] = {};
+	char surname[nameSurname] = {};
 	//char age[ageNumber];
-	int age;
-	char number[phoneNumber];
-	char email[mail];
+	int age = 0;
+	char number[phoneNumber] = {};
+	char email[mail] = {};
 };
 
 void frame()
@@ -61,9 +61,9 @@ void clearTable()
 
 void count(int size)
 {
-	SetConsoleCursorPosition(h, { 37, 0 });
+	SetConsoleCursorPosition(h, { 35, 0 });
 	cout << "  ";
-	SetConsoleCursorPosition(h, { 37, 0 });
+	SetConsoleCursorPosition(h, { 35, 0 });
 	SetConsoleTextAttribute(h, 10);
 	cout << size;
 	SetConsoleTextAttribute(h, 7);
@@ -94,7 +94,7 @@ void delimetr(short column, short row, int length, int color)
 
 void redaktFrame()
 {
-	int sLength = 65, fLength = 100, sWidth = 14, fWidth = 25;
+	int sLength = 65, fLength = 110, sWidth = 14, fWidth = 25;
 
 	for (short i = sWidth; i < fWidth; i++)
 	{
@@ -114,7 +114,7 @@ void redaktFrame()
 
 void cleanRedaktFrame()
 {
-	int sLength = 65, fLength = 100, sWidth = 14, fWidth = 25;
+	int sLength = 65, fLength = 115, sWidth = 14, fWidth = 25;
 
 	for (short i = sWidth; i < fWidth; i++)
 	{
@@ -140,7 +140,7 @@ void cleanRedaktPlace()
 	for (short i = 24; i < 31; i++)
 	{
 		SetConsoleCursorPosition(h, { 0, i });
-		for (int k = 0; k < 50; k++)
+		for (int k = 0; k < 70; k++)
 			cout << " ";
 	}
 }
@@ -156,7 +156,7 @@ void fillRedaktPlace()
 		SetConsoleCursorPosition(h, { column, row++ });
 		cout << names[i];
 		if (i != 4)
-			delimetr(column, row++, 30, 14);
+			delimetr(column, row++, 35, 14);
 	}
 }
 
@@ -167,9 +167,6 @@ void AddPerson(Person *p, int &size)
 
 	short row = 15, col = 75, myage = 0;
 	char str[50] = {};
-
-	if (str == "13")
-		cin.ignore();
 
 	SetConsoleTextAttribute(h, 10);
 	SetConsoleCursorPosition(h, { col, row });
@@ -213,32 +210,33 @@ void Print(Person *arr, int size)
 {
 	short temp = 1;
 	clearTable();
-	if (size != 0)
-		for (short i = 0; i < size; i++)
-		{
-			SetConsoleCursorPosition(h, { 1, temp * 2 });
-			cout << "\t\t\t\t\t\t";
-			SetConsoleCursorPosition(h, { 1, temp * 2 });
-			cout << i + 1 << ". ";
-			printSurnameName(arr, i);
-			delimetr(1, temp * 2 + 1, 40, menuColor);
-			temp++;
-		}
+
+	for (short i = 0; i < size; i++)
+	{
+		SetConsoleCursorPosition(h, { 1, temp * 2 });
+		cout << "\t\t\t\t\t\t";
+		SetConsoleCursorPosition(h, { 1, temp * 2 });
+		cout << i + 1 << ". ";
+		printSurnameName(arr, i);
+		delimetr(1, temp * 2 + 1, 40, menuColor);
+		temp++;
+	}
 }
 
 void Sort(Person *arr, int size)
 {
-	Person temp;
-	bool check = true;
 	if (size == 1)
 		Print(arr, size);
 	else
 	{
+		Person temp;
+		bool check = true;
+
 		for (int i = size - 1; i > 0; i--)
 		{
-			for (int j = 0; arr[i].surname != '\0'; j++)
+			for (int j = 0; arr[i].surname[j] != '\0'; j++)
 			{
-				if (arr[i].surname < arr[i + 1].surname)
+				if (arr[i].surname[j] < arr[i - 1].surname[j])
 				{
 					temp = arr[i - 1];
 					arr[i - 1] = arr[i];
@@ -246,7 +244,7 @@ void Sort(Person *arr, int size)
 					check = false;
 					break;
 				}
-				else if (arr[i].surname > arr[i + 1].surname)
+				else if (arr[i].surname[j] > arr[i - 1].surname[j])
 				{
 					check = false;
 					break;
@@ -254,16 +252,16 @@ void Sort(Person *arr, int size)
 			}
 
 			if (check)
-				for (int j = 0; arr[i].name != '\0'; j++)
+				for (int j = 0; arr[i].name[j] != '\0'; j++)
 				{
-					if (arr[i].name < arr[i + 1].name)
+					if (arr[i].name[j] < arr[i - 1].name[j])
 					{
 						temp = arr[i - 1];
 						arr[i - 1] = arr[i];
 						arr[i] = temp;
 						break;
 					}
-					else if (arr[i].name > arr[i + 1].name)
+					else if (arr[i].name[j] > arr[i - 1].name[j])
 						break;
 				}
 		}
@@ -429,24 +427,62 @@ int starChecker(char *arr)
 		return 4;
 }
 
-void Data(Person *arr, int num)
+void Data(Person *arr, int choice, int num, int size)
 {
 	int index = 0;
 	bool check = true;
 	char temp[20] = {};
+	char *personTemp = new char[70];
+	int ageTemp = 0;
 
-	if (num == 1)
+	for (int i = 0; i < size; i++)
 	{
-		while (temp[index] != '*')
+		switch (choice)
 		{
-			for (int j = 0; arr[i].name[j] != '\0'; j++)
+			case 1:
+				personTemp = arr[i].name;
+			break;
+
+			case 2:
+				personTemp = arr[i].surname;
+			break;
+
+			case 3:
 			{
-				if (arr[i].name[j] == temp[index])
+				ageTemp = arr[i].age;
+
+				if (num == 1)
 				{
-					for (int index = 0; temp[index] != '*'; index++, j++)
+					if (int(ageTemp / 10) != temp[0])
+						check = false;
+
+					if (check)
 					{
-						if (arr[i].name[j] != temp[index])
+						redaktFrame();
+						fillRedaktPlace();
+						fillPersonData(arr, i);
+					}
+				}
+				else if (num == 2)
+				{
+					if (ageTemp % 10 != temp[1])
+						check = false;
+
+					if (check)
+					{
+						redaktFrame();
+						fillRedaktPlace();
+						fillPersonData(arr, i);
+					}
+				}
+				else
+				{
+					for (size_t i = 0; i < 2; i++)
+					{
+						if (int(ageTemp / 10) != temp[i] && i == 0 || ageTemp % 10 != temp[i] && i == 1)
 							check = false;
+						//else if (ageTemp % 10 != temp[i] && i == 1)
+						//	check = false;
 					}
 
 					if (check)
@@ -457,100 +493,111 @@ void Data(Person *arr, int num)
 					}
 				}
 			}
+			break;
+
+			case 4:
+				personTemp = arr[i].number;
+			break;
+
+			case 5:
+				personTemp = arr[i].email;
 		}
+
+		if (num == 1)
+		{
+			while (temp[index] != '*')
+			{
+				for (int j = 0; personTemp[j] != '\0'; j++)
+				{
+					if (personTemp[j] == temp[index])
+					{
+						for (int index = 0; temp[index] != '*'; index++, j++)
+						{
+							if (personTemp[j] != temp[index])
+								check = false;
+						}
+
+						if (check)
+						{
+							redaktFrame();
+							fillRedaktPlace();
+							fillPersonData(arr, i);
+						}
+					}
+				}
+			}
+		}
+		else if (num == 2)
+		{
+			while (temp[index] != '\0')
+			{
+				for (int j = 0; personTemp[j] != '\0'; j++)
+				{
+					if (personTemp[j] == temp[index])
+					{
+						for (int index = 1; temp[index] != '\0'; index++, j++)
+						{
+							if (personTemp[j] != temp[index])
+								check = false;
+						}
+
+						if (check)
+						{
+							redaktFrame();
+							fillRedaktPlace();
+							fillPersonData(arr, i);
+						}
+					}
+				}
+			}
+		}
+		else if (num == 3)
+		{
+			while (temp[++index] != '*' && temp[index] != '\0')
+			{
+				for (int j = 0; personTemp[j] != '\0'; j++)
+				{
+					if (personTemp[j] == temp[index])
+					{
+						for (int index = 1; temp[index] != '\0' && temp[index] != '*'; index++, j++)
+						{
+							if (personTemp[j] != temp[index])
+								check = false;
+						}
+
+						if (check)
+						{
+							redaktFrame();
+							fillRedaktPlace();
+							fillPersonData(arr, i);
+						}
+					}
+				}
+			}
+		}
+		else
+			while (temp[index] != '\0')
+			{
+				for (int j = 0; personTemp[j] != '\0'; j++)
+				{
+					if (personTemp[j] == temp[index])
+					{
+						for (int index = 0; temp[index] != '\0'; index++, j++)
+						{
+							if (personTemp[j] != temp[index])
+								check = false;
+						}
+
+						if (check)
+						{
+							redaktFrame();
+							fillRedaktPlace();
+							fillPersonData(arr, i);
+						}
+					}
+				}
+			}
 	}
-	else if (num == 2)
-	{
-		while (temp[index] != '\0')
-		{
-			for (int j = 0; arr[i].name[j] != '\0'; j++)
-			{
-				if (arr[i].name[j] == temp[index])
-				{
-					for (int index = 1; temp[index] != '\0'; index++, j++)
-					{
-						if (arr[i].name[j] != temp[index])
-							check = false;
-					}
-
-					if (check)
-					{
-						redaktFrame();
-						fillRedaktPlace();
-						fillPersonData(arr, i);
-					}
-				}
-			}
-		}
-	}
-	else if (num == 3)
-	{
-		while (temp[++index] != '*' && temp[index] != '\0')
-		{
-			for (int j = 0; arr[i].name[j] != '\0'; j++)
-			{
-				if (arr[i].name[j] == temp[index])
-				{
-					for (int index = 1; temp[index] != '\0' && temp[index] != '*'; index++, j++)
-					{
-						if (arr[i].name[j] != temp[index])
-							check = false;
-					}
-
-					if (check)
-					{
-						redaktFrame();
-						fillRedaktPlace();
-						fillPersonData(arr, i);
-					}
-				}
-			}
-		}
-	}
-	if (temp[index] == '*')
-		while (temp[++index] != '*' && temp[index] != '\0')
-		{
-			for (int j = 0; arr[i].name[j] != '\0'; j++)
-			{
-				if (arr[i].name[j] == temp[index])
-				{
-					for (int index = 1; temp[index] != '\0' && temp[index] != '*'; index++, j++)
-					{
-						if (arr[i].name[j] != temp[index])
-							check = false;
-					}
-
-					if (check)
-					{
-						redaktFrame();
-						fillRedaktPlace();
-						fillPersonData(arr, i);
-					}
-				}
-			}
-		}
-	else
-		while (temp[index] != '*' && temp[index] != '\0')
-		{
-			for (int j = 0; arr[i].name[j] != '\0'; j++)
-			{
-				if (arr[i].name[j] == temp[index])
-				{
-					for (int index = 0; temp[index] != '\0' && temp[index] != '*'; index++, j++)
-					{
-						if (arr[i].name[j] != temp[index])
-							check = false;
-					}
-
-					if (check)
-					{
-						redaktFrame();
-						fillRedaktPlace();
-						fillPersonData(arr, i);
-					}
-				}
-			}
-		}
 }
 
 void FindPerson(Person *arr, int size)
@@ -581,12 +628,9 @@ void FindPerson(Person *arr, int size)
 		cin >> temp;
 		SetConsoleTextAttribute(h, 7);
 		checkNum = starChecker(temp);
-		Data(arr, checkNum);
+		Data(arr, choice, checkNum, size);
 
-		for (int i = 0; i < size; i++)
-		{
 
-		}
 	break;
 
 	//case 2:
@@ -621,14 +665,15 @@ void FindPerson(Person *arr, int size)
 	system("pause");
 }
 
-void ShowPerson()
-{
-	
-}
+//void ShowPerson()
+//{
+//	
+//}
 
 void menu(int size)
 {
 	static Person *arr = new Person[size];
+
 	int sel = 0, key = 0;
 	clearMenu();
 	if (size == 0)
@@ -755,7 +800,7 @@ void menu(int size)
 			}
 			else if (key == 13 && sel == 4)
 			{
-				ShowPerson();
+				//ShowPerson();
 			}
 			else if (key == 13 && sel == 5)
 				break;
