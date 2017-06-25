@@ -1,6 +1,6 @@
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
-//#pragma once
+//#ifndef FUNCTIONS_H
+//#define FUNCTIONS_H
+#pragma once
 //--------------------------------------------------------------------------
 #define nameSurname 50
 #define mail 60
@@ -17,6 +17,7 @@ typedef struct Person
 	int age;
 	char number[phoneNumber];
 	char email[mail];
+//	Person * p;
 }
 PERSON;
 //--------------------------------------------------------------------------
@@ -25,5 +26,5 @@ void SetColor(int color);
 void frame();
 void menu(PERSON *pers, int size);
 //--------------------------------------------------------------------------
-#endif
+//#endif
 
