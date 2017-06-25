@@ -1,43 +1,37 @@
 ﻿#include <iostream>
-#include <Windows.h>
-#include "Functions.h"
+//#include <Windows.h>
 
 using namespace std;
 
-HANDLE w = GetStdHandle(STD_OUTPUT_HANDLE);
-
-#define nameSurnmae 50
-#define mail 60
-#define phoneNumber 20
-//--------------------------------------
-
-struct Person
-{
-	char name[nameSurnmae];
-	char surname[nameSurnmae];
-	int age;
-	char number[phoneNumber];
-	char email[mail];
-};
-
-int main()
+#include "Functions.h"
+//--------------------------------------------------------------------------
+int main(int argc, char* argv[])
 {
 	int size = 0;
-	struct Person arr[size] = {};
+	PERSON *pers = 0;
+	//	pers = (PERSON *)calloc(size, sizeof(PERSON));
 
-	SetConsoleCursorPosition(w, { 15, 0 });
-	cout << "STUDENT LIST | COUNT: ";
-	SetConsoleTextAttribute(w, 10);
+	GotoXY(15, 0);
+	cout << "PHONE BOOK | COUNT: ";
+	SetColor(10);
 	cout << size;
-	SetConsoleTextAttribute(w, 7);
+
+	SetColor(7);
 	frame();
 
-	SetConsoleCursorPosition(w, { 75, 0 });
-	SetConsoleTextAttribute(w, 10);
+	GotoXY(75, 0);
+	SetColor(10);
 	cout << "MENU";
-	SetConsoleTextAttribute(w, 7);
-	menu(p, size);
+	SetColor(7);
+	menu(pers, size);
 
-	SetConsoleCursorPosition(w, { 0, 23 });
+	GotoXY(0, 23);
 	cout << endl;
+
+	if (pers) //size > 0
+		free(pers);
+
+	return 0;
 }
+//--------------------------------------------------------------------------
+
