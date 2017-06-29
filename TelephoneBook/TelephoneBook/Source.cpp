@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 //#include <Windows.h>
 
 using namespace std;
@@ -19,10 +19,6 @@ int main(int argc, char* argv[])
 	SetColor(7);
 	frame();
 
-	GotoXY(75, 0);
-	SetColor(10);
-	cout << "MENU";
-	SetColor(7);
 	menu(pers, size);
 
 	GotoXY(0, 23);
@@ -34,4 +30,3 @@ int main(int argc, char* argv[])
 	return 0;
 }
 //--------------------------------------------------------------------------
-
