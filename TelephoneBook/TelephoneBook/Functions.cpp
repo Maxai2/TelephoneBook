@@ -20,7 +20,7 @@ void cleanRedaktFrame();
 void Sort(PERSON *arr, int size);
 void RemovePerson(PERSON * &arr, int &size);
 void cleanRedaktPlace();
-void Print(PERSON *arr, int size, int index);
+void Print(PERSON *arr, int size, bool show = false, int index = 0);
 void EditPerson(PERSON *arr, int size);
 void FindPerson(PERSON *arr, int size);
 void ShowPerson(PERSON *arr, int size);
@@ -41,6 +41,11 @@ void SetColor(int color)
 void showmenu(int size, int sel)
 {
 	clearMenu();
+
+	GotoXY(75, 0);
+	SetColor(10);
+	cout << "MENU";
+	SetColor(7);
 
 	if (size == 0)
 	{
@@ -121,21 +126,21 @@ void menu(PERSON *pers, int size)
 					RemovePerson(pers, size);
 					count(size);
 					cleanRedaktPlace();
-					Print(pers, size, 0);
+					Print(pers, size);
 					break;
 				}
 
 			case 2:
-					EditPerson(pers, size);
-					Print(pers, size, 0);
-					break;
+				EditPerson(pers, size);
+				Print(pers, size);
+				break;
 			case 3:
-					FindPerson(pers, size);
-					cleanRedaktPlace();
-					break;
+				FindPerson(pers, size);
+				cleanRedaktPlace();
+				break;
 			case 4:
-					ShowPerson(pers, size);
-					break;
+				ShowPerson(pers, size);
+				break;
 			case 5:
 				return;
 			}
@@ -189,7 +194,7 @@ void count(int size)
 //-----------------------------------------------------------------------------
 void clearMenu()
 {
-	int sLength = 62, fLength = 90, sWidth = 1, fWidth = 10;
+	int sLength = 62, fLength = 90, sWidth = 0, fWidth = 10;
 
 	for (short i = sWidth; i < fWidth; i++)
 	{
@@ -289,9 +294,6 @@ void AddPerson(PERSON * &pers, int &size)
 
 	SetColor(10);
 
-	if (temp.name == '\0')
-		cin.ignore();
-
 	GotoXY(col, row);
 	//	fgets(temp.name, sizeof(temp.name)-1, stdin);
 	cin.getline(temp.name, sizeof(temp.name) - 1);
@@ -337,23 +339,24 @@ void printSurnameName(PERSON *arr, int index)
 	cout << arr[index].surname << " " << arr[index].name;
 }
 //-----------------------------------------------------------------------------
-void Print(PERSON *arr, int size, int index)
+void Print(PERSON *arr, int size, bool show, int index)
 {
-	short temp = 1, color;
-	clearTable();
+	short temp = 1;
 
-	if (index == 0)
-		color = 7;
-	else
-		color = 10;
+	clearTable();
 
 	for (short i = 0; i < size; i++)
 	{
 		GotoXY(1, temp * 2);
 		cout << "\t\t\t\t\t\t";
 		GotoXY(1, temp * 2);
+
+		if (index == i && show == true)
+			SetColor(10);
+		else
+			SetColor(7);
+
 		cout << i + 1 << ". ";
-		SetColor(color);
 		printSurnameName(arr, i);
 		delimetr(1, temp * 2 + 1, 40, menuColor);
 		temp++;
@@ -374,15 +377,17 @@ int fcmp(const void *A, const void *B)
 
 void Sort(PERSON *arr, int size)
 {
-	if (size == 1)
-		Print(arr, size, 0);
-	else
-	{
+	if (size != 1)
 		qsort(arr, size, sizeof(PERSON), fcmp);
-		Print(arr, size, 0);
-	}
+
+	Print(arr, size);
 }
 //-----------------------------------------------------------------------------
+PERSON *GetPerson(PERSON * &pers, int n)
+{
+	return &pers[n];
+}
+//---------------------------------------------------------------------------
 void RemovePerson(PERSON * &pers, int &size)
 {
 	int num = 0;
@@ -391,37 +396,29 @@ void RemovePerson(PERSON * &pers, int &size)
 	cout << "Enter the order number of student for remove: ";
 	SetColor(10);
 	cin >> num;
+	cin.ignore();
 	SetColor(7);
 	num--;
 
-	if (size == 1)
-	{
-//		free(pers);
-		//delete[] pers;
-		size--;
+	if (num < 0 || num >= size)
 		return;
-	}
-	//else if (num == size - 1)
-	//	break;
-	while (num != size - 1)
+
+	PERSON *newPers = new PERSON[size - 1];
+	PERSON *d = newPers;
+
+	for (int i = 0; i < num; i++)
 	{
-		temp = pers[num];
-		pers[num] = pers[num + 1];
-		pers[num + 1] = temp;
-		num++;
+		PERSON *s = /*GetPerson(pers, i)*/ &pers[i];
+		memcpy(d++, s, sizeof(PERSON));
 	}
 
-	//PERSON *newpers = (PERSON*)calloc(size - 1, sizeof(PERSON));
+	for (int i = num + 1; i < size; i++)
+	{
+		PERSON *s = /*GetPerson(pers, i)*/ &pers[i];
+		memcpy(d++, s, sizeof(PERSON));
+	}
 
-	//if (pers) // size > 0
-	//{
-	//	memcpy(newpers, pers, size * sizeof(PERSON));
-	//	free(pers);
-	//}
-
-	//pers = newpers;
-	//memcpy(&pers[size], &temp, sizeof(PERSON));
-
+	pers = newPers;
 	size--;
 }
 //-----------------------------------------------------------------------------
@@ -490,14 +487,14 @@ void EditPerson(PERSON *arr, int size)
 		SetColor(10);
 		cin.getline(arr[num].name, nameSurname);
 		SetColor(7);
-	break;
+		break;
 
 	case 2:
 		cout << "Input new surname : ";
 		SetColor(10);
 		cin.getline(arr[num].surname, nameSurname);
 		SetColor(7);
-	break;
+		break;
 
 	case 3:
 		cout << "Input new age : ";
@@ -505,14 +502,14 @@ void EditPerson(PERSON *arr, int size)
 		cin >> age;
 		arr[num].age = age;
 		SetColor(7);
-	break;
+		break;
 
 	case 4:
 		cout << "Input new number : ";
 		SetColor(10);
 		cin.getline(arr[num].number, phoneNumber);
 		SetColor(7);
-	break;
+		break;
 
 	case 5:
 		cout << "Input new email : ";
@@ -524,7 +521,7 @@ void EditPerson(PERSON *arr, int size)
 	redaktFrame();
 	fillRedaktPlace();
 	fillPersonData(arr, index);
-	Print(arr, size, 0);
+	Print(arr, size);
 	GotoXY(0, 24);
 	cout << "Redact again?(y/n): ";
 	char sym;
@@ -562,77 +559,77 @@ void Data(PERSON *arr, char *temp, int choice, int num, int size)
 {
 	int index = 0, ageTemp = 0, count = 0;
 	bool check = true;
-//	char tempAge[20] = {};
+	//	char tempAge[20] = {};
 	char *personTemp = new char[70];
-//	char personTemp[50] = {};
+	//	char personTemp[50] = {};
 	short row = 25;
 
 	for (int i = 0; i < size; i++)
 	{
 		switch (choice)
 		{
-			case 1:
-				personTemp = arr[i].name;
+		case 1:
+			personTemp = arr[i].name;
 			break;
 
-			case 2:
-				personTemp = arr[i].surname;
+		case 2:
+			personTemp = arr[i].surname;
 			break;
 
-			case 3:
+		case 3:
+		{
+			ageTemp = arr[i].age;
+
+			if (num == 1)
 			{
-				ageTemp = arr[i].age;
+				if (int(ageTemp / 10) != temp[0])
+					check = false;
 
-				if (num == 1)
+				if (check)
 				{
-					if (int(ageTemp / 10) != temp[0])
-						check = false;
-
-					if (check)
-					{
-						GotoXY(0, row);
-						printSurnameName(arr, i);
-						row++; count++;
-					}
-				}
-				else if (num == 2)
-				{
-					if (ageTemp % 10 != temp[1])
-						check = false;
-
-					if (check)
-					{
-						GotoXY(0, row);
-						printSurnameName(arr, i);
-						row++; count++;
-					}
-				}
-				else
-				{
-					for (size_t i = 0; i < 2; i++)
-					{
-						if (int(ageTemp / 10) != temp[i] && i == 0 || ageTemp % 10 != temp[i] && i == 1)
-							check = false;
-						//else if (ageTemp % 10 != temp[i] && i == 1)
-						//	check = false;
-					}
-
-					if (check)
-					{
-						GotoXY(0, row);
-						printSurnameName(arr, i);
-						row++; count++;
-					}
+					GotoXY(0, row);
+					printSurnameName(arr, i);
+					row++; count++;
 				}
 			}
+			else if (num == 2)
+			{
+				if (ageTemp % 10 != temp[1])
+					check = false;
+
+				if (check)
+				{
+					GotoXY(0, row);
+					printSurnameName(arr, i);
+					row++; count++;
+				}
+			}
+			else
+			{
+				for (size_t i = 0; i < 2; i++)
+				{
+					if (int(ageTemp / 10) != temp[i] && i == 0 || ageTemp % 10 != temp[i] && i == 1)
+						check = false;
+					//else if (ageTemp % 10 != temp[i] && i == 1)
+					//	check = false;
+				}
+
+				if (check)
+				{
+					GotoXY(0, row);
+					printSurnameName(arr, i);
+					row++; count++;
+				}
+			}
+		}
+		break;
+
+		case 4:
+			personTemp = arr[i].number;
 			break;
 
-			case 4:
-				personTemp = arr[i].number;
-			break;
-
-			case 5:
-				personTemp = arr[i].email;
+		case 5:
+			personTemp = arr[i].email;
 		}
 
 		if (num == 1)
@@ -774,24 +771,24 @@ void FindPerson(PERSON *arr, int size)
 
 	switch (choice)
 	{
-		case 1:
-			cout << "Input name or part of name(use \'*\' for redakt search): ";
+	case 1:
+		cout << "Input name or part of name(use \'*\' for redakt search): ";
 		break;
 
-		case 2:
-			cout << "Input surname or part of surname(use \'*\' for redakt search): ";
+	case 2:
+		cout << "Input surname or part of surname(use \'*\' for redakt search): ";
 		break;
 
-		case 3:
-			cout << "Input age or part of age(use \'*\' for redakt search): ";
+	case 3:
+		cout << "Input age or part of age(use \'*\' for redakt search): ";
 		break;
 
-		case 4:
-			cout << "Input number or part of number(use \'*\' for redakt search): ";
+	case 4:
+		cout << "Input number or part of number(use \'*\' for redakt search): ";
 		break;
 
-		case 5:
-			cout << "Input email or part of email(use \'*\' for redakt search): ";
+	case 5:
+		cout << "Input email or part of email(use \'*\' for redakt search): ";
 	}
 
 	SetColor(10);
@@ -800,34 +797,49 @@ void FindPerson(PERSON *arr, int size)
 	checkNum = starChecker(str);
 	Data(arr, str, choice, checkNum, size);
 
-//	cleanRedaktPlace();
+	//	cleanRedaktPlace();
 	cout << endl;
 	system("pause");
 }
 //-----------------------------------------------------------------------------
 void ShowPerson(PERSON *arr, int size)
 {
+	GotoXY(0, 24);
+	cout << "Enter \'esc\' to return to the menu";
+
+	if (size == 1)
+	{
+		clearMenu();
+		redaktFrame();
+		fillRedaktPlace();
+		fillPersonData(arr, 0);
+		getch();
+		cleanRedaktFrame();
+		cleanRedaktPlace();
+		return;
+	}
+
 	clearMenu();
-	cleanRedaktFrame();
+//	cleanRedaktFrame();
 	clearTable();
 
 	int index = 1, key = 0, sel = 0;
 
-	GotoXY(0, 24);
-	cout << "Enter \'esc\' to return to the menu";
-
 	while (true)
 	{
 		clearTable();
-		Print(arr, size, sel);
+		Print(arr, size, true, sel);
+		redaktFrame();
+		fillRedaktPlace();
+		fillPersonData(arr, sel);
 
 		key = getch();
 		if (key == 224)
 			key = getch();
 
-		if (key == 72 && sel < size) // Up
+		if (key == 72 && sel < 0) // Up
 			sel--;
-		else if (key == 80 && sel > 0) // Down
+		else if (key == 80 && sel > size) // Down
 			sel++;
 		else if (key == 27) // esc
 			break;
@@ -835,10 +847,12 @@ void ShowPerson(PERSON *arr, int size)
 		//	EditPerson(arr, size);
 
 		cleanRedaktFrame();
-		redaktFrame();
-		fillRedaktPlace();
-		fillPersonData(arr, --index);
 	}
+
+	clearTable();
+	Print(arr, size);
+	cleanRedaktFrame();
+	cleanRedaktPlace();
 }
 //-----------------------------------------------------------------------------
 //void Sort(PERSON *arr, int size)
