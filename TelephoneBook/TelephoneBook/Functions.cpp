@@ -820,7 +820,7 @@ void ShowPerson(PERSON *arr, int size)
 	}
 
 	clearMenu();
-//	cleanRedaktFrame();
+	//	cleanRedaktFrame();
 	clearTable();
 
 	int index = 1, key = 0, sel = 0;
@@ -837,9 +837,9 @@ void ShowPerson(PERSON *arr, int size)
 		if (key == 224)
 			key = getch();
 
-		if (key == 72 && sel < 0) // Up
+		if (key == 72 && sel > 0) // Up
 			sel--;
-		else if (key == 80 && sel > size) // Down
+		else if (key == 80 && sel < size - 1) // Down
 			sel++;
 		else if (key == 27) // esc
 			break;
