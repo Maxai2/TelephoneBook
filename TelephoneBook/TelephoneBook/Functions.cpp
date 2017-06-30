@@ -13,6 +13,9 @@ using namespace std;
 #define menuColor 11
 #define nameLength 255
 //-----------------------------------------------------------------------------
+char path[_MAX_PATH] = "C://Users//Ali//Documents//Visual Studio 2017//Projects//phoneList//phoneList//base.dat";
+FILE *f;
+//-----------------------------------------------------------------------------
 void AddPerson(PERSON * &pers, int &size);
 void clearMenu();
 void count(int size);
@@ -24,6 +27,7 @@ void Print(PERSON *arr, int size, bool show = false, int index = 0);
 void EditPerson(PERSON *arr, int size);
 void FindPerson(PERSON *arr, int size);
 void ShowPerson(PERSON *arr, int size);
+void save(PERSON *pers, int &size);
 //-----------------------------------------------------------------------------
 void GotoXY(int c, int r)
 {
@@ -91,6 +95,8 @@ void menu(PERSON *pers, int size)
 {
 	int sel = 0;
 
+
+
 	while (true)
 	{
 		showmenu(size, sel);
@@ -142,6 +148,7 @@ void menu(PERSON *pers, int size)
 				ShowPerson(pers, size);
 				break;
 			case 5:
+				save(pers, size);
 				return;
 			}
 		}
@@ -854,6 +861,106 @@ void ShowPerson(PERSON *arr, int size)
 	cleanRedaktFrame();
 	cleanRedaktPlace();
 }
+//-----------------------------------------------------------------------------
+//void DestroyPersons(PERSON)
+//{
+//	if (PERSON) // Count > 0
+//	{
+//		delete[] PERSON;
+//		PERSON = 0;
+//	}
+//}
+//-----------------------------------------------------------------------------
+void save(PERSON *pers, int &size)
+{
+	f = fopen(path, "wb");
+
+	if (f == NULL)
+		return;
+
+	fwrite(&size, sizeof(int), 1, f);
+
+	for (int i = 0; i < size; i++)
+	{
+		PERSON *p = GetPerson(pers, i);
+		fwrite(p, sizeof(PERSON), 1, f);
+	}
+
+	fclose(f);
+}
+//-----------------------------------------------------------------------------
+void load(PERSON *pers, int &size)
+{
+	f = fopen(path, "rb");
+
+	if (f == NULL)
+		return;
+
+	if (pers)
+	{
+		delete[] pers;
+		pers = 0;
+	}
+
+	fread(&size, sizeof(int), 1, f);
+	if (size)
+		pers = new PERSON[size];
+	else
+		pers = 0;
+
+	for (int i = 0; i < size; i++)
+	{
+		PERSON *p = GetPerson(pers, i);
+		fread(p, sizeof(PERSON), 1, f);
+	}
+
+	Print(pers, size);
+
+	fclose(f);
+}
+//-----------------------------------------------------------------------------
+/*void SavePersons(char *FileName)
+{
+	FILE *fp = fopen(FileName, "wb");
+
+	if (fp == NULL)
+		return;
+
+	fwrite(&Count, sizeof(int), 1, fp);
+
+	for (int i = 0; i < Count; i++)
+	{
+		PERSON *p = GetPerson(i);
+		fwrite(p, sizeof(PERSON), 1, fp);
+	}
+
+	fclose(fp);
+}
+//---------------------------------------------------------------------------
+void LoadPersons(char *FileName)
+{
+	FILE *fp = fopen(FileName, "rb");
+
+	if (fp == NULL)
+		return;
+
+	DestroyPersons();
+
+	fread(&Count, sizeof(int), 1, fp);
+	if (Count)
+		Persons = new PERSON[Count];
+	else
+		Persons = 0;
+
+	for (int i = 0; i < Count; i++)
+	{
+		PERSON *p = GetPerson(i);
+		fread(p, sizeof(PERSON), 1, fp);
+	}
+
+	fclose(fp);
+}
+*/
 //-----------------------------------------------------------------------------
 //void Sort(PERSON *arr, int size)
 //{
