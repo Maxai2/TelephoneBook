@@ -11,6 +11,8 @@ int main(int argc, char* argv[])
 	PERSON *pers = 0;
 	//	pers = (PERSON *)calloc(size, sizeof(PERSON));
 
+	load(pers, size);
+
 	GotoXY(15, 0);
 	cout << "PHONE BOOK | COUNT: ";
 	SetColor(10);
