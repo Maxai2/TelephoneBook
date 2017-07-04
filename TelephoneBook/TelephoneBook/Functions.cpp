@@ -13,9 +13,6 @@ using namespace std;
 #define menuColor 11
 #define nameLength 255
 //-----------------------------------------------------------------------------
-char path[_MAX_PATH] = "C://Users//Ali//Documents//Visual Studio 2017//Projects//phoneList//phoneList//base.dat";
-FILE *f;
-//-----------------------------------------------------------------------------
 void AddPerson(PERSON * &pers, int &size);
 void clearMenu();
 void count(int size);
@@ -27,7 +24,6 @@ void Print(PERSON *arr, int size, bool show = false, int index = 0);
 void EditPerson(PERSON *arr, int size);
 void FindPerson(PERSON *arr, int size);
 void ShowPerson(PERSON *arr, int size);
-void save(PERSON *pers, int &size);
 //-----------------------------------------------------------------------------
 void GotoXY(int c, int r)
 {
@@ -148,7 +144,6 @@ void menu(PERSON *pers, int size)
 				ShowPerson(pers, size);
 				break;
 			case 5:
-				save(pers, size);
 				return;
 			}
 		}
@@ -352,22 +347,27 @@ void Print(PERSON *arr, int size, bool show, int index)
 
 	clearTable();
 
-	for (short i = 0; i < size; i++)
+	if (size <= 10)
 	{
-		GotoXY(1, temp * 2);
-		cout << "\t\t\t\t\t\t";
-		GotoXY(1, temp * 2);
+		for (short i = 0; i < size; i++)
+		{
+			GotoXY(1, temp * 2);
+			cout << "\t\t\t\t\t\t";
+			GotoXY(1, temp * 2);
 
-		if (index == i && show == true)
-			SetColor(10);
-		else
-			SetColor(7);
+			if (index == i && show == true)
+				SetColor(10);
+			else
+				SetColor(7);
 
-		cout << i + 1 << ". ";
-		printSurnameName(arr, i);
-		delimetr(1, temp * 2 + 1, 40, menuColor);
-		temp++;
+			cout << i + 1 << ". ";
+			printSurnameName(arr, i);
+			delimetr(1, temp * 2 + 1, 40, menuColor);
+			temp++;
+		}
 	}
+	//	else 
+
 }
 //-----------------------------------------------------------------------------
 int fcmp(const void *A, const void *B)
@@ -871,7 +871,7 @@ void ShowPerson(PERSON *arr, int size)
 //	}
 //}
 //-----------------------------------------------------------------------------
-void save(PERSON *pers, int &size)
+void save(FILE *f, char *path, PERSON *pers, int &size)
 {
 	f = fopen(path, "wb");
 
@@ -889,7 +889,7 @@ void save(PERSON *pers, int &size)
 	fclose(f);
 }
 //-----------------------------------------------------------------------------
-void load(PERSON *pers, int &size)
+void load(FILE *f, char *path, PERSON *pers, int &size)
 {
 	f = fopen(path, "rb");
 
@@ -921,44 +921,44 @@ void load(PERSON *pers, int &size)
 //-----------------------------------------------------------------------------
 /*void SavePersons(char *FileName)
 {
-	FILE *fp = fopen(FileName, "wb");
+FILE *fp = fopen(FileName, "wb");
 
-	if (fp == NULL)
-		return;
+if (fp == NULL)
+return;
 
-	fwrite(&Count, sizeof(int), 1, fp);
+fwrite(&Count, sizeof(int), 1, fp);
 
-	for (int i = 0; i < Count; i++)
-	{
-		PERSON *p = GetPerson(i);
-		fwrite(p, sizeof(PERSON), 1, fp);
-	}
+for (int i = 0; i < Count; i++)
+{
+PERSON *p = GetPerson(i);
+fwrite(p, sizeof(PERSON), 1, fp);
+}
 
-	fclose(fp);
+fclose(fp);
 }
 //---------------------------------------------------------------------------
 void LoadPersons(char *FileName)
 {
-	FILE *fp = fopen(FileName, "rb");
+FILE *fp = fopen(FileName, "rb");
 
-	if (fp == NULL)
-		return;
+if (fp == NULL)
+return;
 
-	DestroyPersons();
+DestroyPersons();
 
-	fread(&Count, sizeof(int), 1, fp);
-	if (Count)
-		Persons = new PERSON[Count];
-	else
-		Persons = 0;
+fread(&Count, sizeof(int), 1, fp);
+if (Count)
+Persons = new PERSON[Count];
+else
+Persons = 0;
 
-	for (int i = 0; i < Count; i++)
-	{
-		PERSON *p = GetPerson(i);
-		fread(p, sizeof(PERSON), 1, fp);
-	}
+for (int i = 0; i < Count; i++)
+{
+PERSON *p = GetPerson(i);
+fread(p, sizeof(PERSON), 1, fp);
+}
 
-	fclose(fp);
+fclose(fp);
 }
 */
 //-----------------------------------------------------------------------------
