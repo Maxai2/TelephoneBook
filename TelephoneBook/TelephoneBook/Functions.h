@@ -25,6 +25,7 @@ void GotoXY(int c, int r);
 void SetColor(int color);
 void frame();
 void menu(PERSON *pers, int size);
-void load(PERSON *pers, int &size);
+void load(FILE *f, char *path, PERSON *pers, int &size);
+void save(FILE *f, char *path, PERSON *pers, int &size);
 //--------------------------------------------------------------------------
 //#endif
